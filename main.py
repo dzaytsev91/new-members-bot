@@ -15,13 +15,25 @@ bot.set_my_commands(
     ]
 )
 
-conn = sqlite3.connect("katty", check_same_thread=False)
+conn = sqlite3.connect("katty.db", check_same_thread=False)
 conn.execute(
-    "CREATE TABLE IF NOT EXISTS user_messages (user_id int, message_id int, message_thread_id int, created_at timestamp);"
+    "CREATE TABLE IF NOT EXISTS user_messages (user_id int, username string, text string, message_id int, created_at timestamp);"
 )
 
 matplotlib.use("agg")
 matplotlib.rc("figure", figsize=(20, 5))
+
+
+def decl(number: int, titles: list):
+    cases = [2, 0, 1, 1, 1, 2]
+    if 4 < number % 100 < 20:
+        idx = 2
+    elif number % 10 < 5:
+        idx = cases[number % 10]
+    else:
+        idx = cases[5]
+
+    return titles[idx]
 
 
 @bot.message_handler(commands=["stat"])
@@ -75,24 +87,16 @@ def hello(message):
 @bot.message_handler(
     content_types=[
         "text",
-        "animation",
-        "audio",
-        "document",
-        "photo",
-        "sticker",
-        "video",
-        "video_note",
-        "voice",
-        "location",
-        "contact",
     ]
 )
 def handle_message(message):
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO user_messages (user_id, message_id, created_at) VALUES(?, ?, ?) ON CONFLICT DO NOTHING",
+        "INSERT INTO user_messages (user_id, username, text, message_id, created_at) VALUES(?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
         (
             message.from_user.id,
+            message.from_user.username,
+            message.text,
             message.id,
             datetime.now(),
         ),
