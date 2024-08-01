@@ -72,7 +72,7 @@ def hello(message):
         user_id = new_user.id
         user_name = new_user.first_name
         mention = "[" + user_name + "](tg://user?id=" + str(user_id) + ")"
-        hello_text = "Пожалуйста напиши рассказ #осебе"
+        hello_text = "Пожалуйста напиши рассказ #осебе и скинь нюдсы"
         instruction_message = "Добро пожаловать в чат {}!\n{}".format(
             mention, hello_text
         )
